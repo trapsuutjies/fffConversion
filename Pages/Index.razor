@@ -1,0 +1,76 @@
+﻿@page "/"
+@using BlazorApp.Data
+@inject ConverterService ConvertService
+
+<PageTitle>FFF Conversion</PageTitle>
+
+<h1>Please enter your name and value to convert</h1>
+<div>
+    <label>User name:
+        <input type="text" @bind="ConverterService.UserName"/>
+    </label>
+</div>
+<div>
+    <EditForm Model="converter">          
+    <label>Input:
+        <input type="number" @bind="converter.Input"/>
+    </label>
+        <label>Input Unit Type:</label>
+        <InputSelect @bind-Value="converter.UnitType">
+            @foreach (var unit in Enum.GetValues(typeof(UnitType)))
+            {
+                <option>@unit</option>
+            }
+        </InputSelect>
+            <br />
+            
+        <label>Input Unit:</label>
+            @if (converter.UnitType == UnitType.Time)
+            {
+            <InputSelect @bind-Value="converter.InputTime">
+                @foreach (var unit in Enum.GetValues(typeof(Time)))
+                {
+                    <option>@unit</option>
+                }
+            </InputSelect>
+            <br />
+        <label>Output Unit:</label>
+            <InputSelect @bind-Value="converter.ResultTime">
+                @foreach (var unit in Enum.GetValues(typeof(Time)))
+                {
+                    <option>@unit</option>
+                }
+            </InputSelect>
+            } else if (converter.UnitType == UnitType.Volume)
+            {
+            <InputSelect @bind-Value="converter.InputVolume">
+                @foreach (var unit in Enum.GetValues(typeof(Volume)))
+                {
+                    <option>@unit</option>
+                }
+            </InputSelect>
+            <br />
+        <label>Output Unit:</label>
+            <InputSelect @bind-Value="converter.ResultVolume">
+                @foreach (var unit in Enum.GetValues(typeof(Volume)))
+                {
+                    <option>@unit</option>
+                }
+            </InputSelect>
+            }     
+            <div>
+    <label>Result:
+        <input @bind="converter.Result" disabled="disabled"/>
+    </label>
+    </div>
+    </EditForm>
+</div>
+<button @onclick="ConvertClicked">Convert</button>
+
+@code{
+    private Converter converter = new Converter();
+    private void ConvertClicked()
+    {
+        var result = ConvertService.ConvertAsync(converter, ConverterService.UserName);
+    }
+}

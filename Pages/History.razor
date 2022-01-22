@@ -1,0 +1,67 @@
+﻿@page "/fetchdata"
+
+<PageTitle>History</PageTitle>
+
+@using BlazorApp.Data
+@inject HistoryService HistoryService
+
+<h1>Personal History</h1>
+
+<p>Other user activity is hidden but a summary is shown</p>
+
+@if (myHistory == null || stories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Input</th>
+                <th>Input Type</th>
+                <th>Result Type</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var history in myHistory)
+            {
+                <tr>
+                    <td>@history.Input</td>
+                    <td>@history.InputType</td>
+                    <td>@history.ResultType</td>
+                    <td>@history.Result</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Calculations</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var story in stories)
+            {
+                <tr>
+                    <td>@story.Name</td>
+                    <td>@story.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Data.History[]? myHistory;
+    private Summary[]? stories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        myHistory = await HistoryService.GetMyHistory(ConverterService.UserName);
+        stories = await HistoryService.GetSummary();
+    }
+}
